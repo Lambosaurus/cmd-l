@@ -11,6 +11,44 @@
 
 #define LENGTH(x)		(sizeof(x) / sizeof(*x))
 
+// Macros for creating menus.
+#define CMD_ARGUMENT(_type, _name) 		\
+	{									\
+		.type = _type,					\
+		.name = _name					\
+	}
+
+#define CMD_FUNCTION(_name, _callback)	\
+	{									\
+		.type = Cmd_Node_Function, 		\
+		.name = _name,					\
+		.func = {						\
+			.callback = _callback,		\
+			.arglen = 0					\
+		} 								\
+	}
+
+#define CMD_AFUNCTION(_name, _callback, _arglist) \
+	{									\
+		.type = Cmd_Node_Function, 		\
+		.name = _name,					\
+		.func = {						\
+			.callback = _callback,		\
+			.args = _arglist,			\
+			.arglen = LENGTH(_arglist)	\
+		} 								\
+	}
+
+#define CMD_MENU(_name, _nodelist)		\
+	{									\
+		.type = Cmd_Node_Menu,			\
+		.name = _name,					\
+		.menu = {						\
+			.nodes = _nodelist,			\
+			.count = LENGTH(_nodelist)	\
+		}								\
+	}
+
 /*
  * PUBLIC TYPES
  */

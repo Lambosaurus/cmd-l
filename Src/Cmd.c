@@ -329,7 +329,9 @@ static void Cmd_FreeAll(Cmd_Line_t * line)
 
 uint32_t Cmd_MemRemaining(Cmd_Line_t * line)
 {
-	return line->mem.size - (line->mem.head - line->mem.heap);
+	int32_t rem = line->mem.size - (line->mem.head - line->mem.heap);
+	if (rem < 0) { return 0; }
+	return rem;
 }
 
 static Cmd_TokenStatus_t Cmd_ParseToken(const char ** str, Cmd_Token_t * token)
