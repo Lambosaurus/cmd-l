@@ -3,6 +3,8 @@ A command line handler for embedded devices.
 
 This supports a variety of useful features, aimed at user friendly-ness, without an excessive overhead for an embedded devices.
 
+<img src="https://user-images.githubusercontent.com/11606026/127823021-a12764eb-289e-40ef-a8a9-a2a94ea7c976.png" width="600">
+
 ## Features
 ### Argument parsing:
 Arguments are described in data alongside your functions. This means arguments can be validated and parsed to the appropriate types before your funcition is called.
