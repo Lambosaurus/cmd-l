@@ -157,6 +157,12 @@ void Cmd_Parse(Cmd_Line_t * line, const uint8_t * data, uint32_t count)
 					Cmd_RunRoot(line, line->bfr.data);
 					line->bfr.index = 0;
 				}
+#ifdef CMD_PROMPT
+				if (line->cfg.prompt)
+				{
+					line->print((uint8_t *)CMD_PROMPT, strlen(CMD_PROMPT));
+				}
+#endif //CMD_PROMPT
 				break;
 #ifdef CMD_USE_TABCOMPLETE
 			case '\t':
