@@ -55,8 +55,11 @@ static void Cmd_Run(Cmd_Line_t * line, const Cmd_Node_t * node, const char * str
 static void Cmd_RunRoot(Cmd_Line_t * line, const char * str);
 static void Cmd_RunMenu(Cmd_Line_t * line, const Cmd_Node_t * node, const char * str);
 static void Cmd_RunFunction(Cmd_Line_t * line, const Cmd_Node_t * node, const char * str);
+
+#ifdef CMD_HELP_TOKEN
 static void Cmd_PrintMenuHelp(Cmd_Line_t * line, const Cmd_Node_t * node);
 static void Cmd_PrintFunctionHelp(Cmd_Line_t * line, const Cmd_Node_t * node);
+#endif
 
 #ifdef CMD_USE_BELL
 static void Cmd_Bell(Cmd_Line_t * line);
@@ -551,11 +554,13 @@ static void Cmd_RunMenu(Cmd_Line_t * line, const Cmd_Node_t * node, const char *
 		break; // Continue execution.
 	}
 
-	if (strcmp("?", token.str) == 0)
+#ifdef CMD_HELP_TOKEN
+	if (strcmp(CMD_HELP_TOKEN, token.str) == 0)
 	{
 		Cmd_PrintMenuHelp(line, node);
 	}
 	else
+#endif //CMD_HELP_TOKEN
 	{
 		const Cmd_Node_t * selected = NULL;
 		for (uint32_t i = 0; i < node->menu.count; i++)
@@ -588,11 +593,13 @@ static void Cmd_RunFunction(Cmd_Line_t * line, const Cmd_Node_t * node, const ch
 	Cmd_Token_t token;
 	Cmd_TokenStatus_t tstat = Cmd_NextToken(line, &str, &token);
 
-	if (tstat == Cmd_Token_Ok && strcmp("?", token.str) == 0)
+#ifdef CMD_HELP_TOKEN
+	if (tstat == Cmd_Token_Ok && strcmp(CMD_HELP_TOKEN, token.str) == 0)
 	{
 		Cmd_PrintFunctionHelp(line, node);
 		return;
 	}
+#endif
 
 	for (argn = 0; argn < node->func.arglen; argn++)
 	{
@@ -643,6 +650,7 @@ static void Cmd_RunFunction(Cmd_Line_t * line, const Cmd_Node_t * node, const ch
 	}
 }
 
+#ifdef CMD_HELP_TOKEN
 static void Cmd_PrintMenuHelp(Cmd_Line_t * line, const Cmd_Node_t * node)
 {
 	Cmd_Printf(line, Cmd_Reply_Info, "<menu: %s> contains %d nodes:" LF, node->name, node->menu.count);
@@ -662,6 +670,7 @@ static void Cmd_PrintFunctionHelp(Cmd_Line_t * line, const Cmd_Node_t * node)
 		Cmd_Printf(line, Cmd_Reply_Info, " - <%s: %s>" LF, Cmd_ArgTypeStr(line, arg), arg->name);
 	}
 }
+#endif //CMD_HELP_TOKEN
 
 #ifdef CMD_USE_ANSI
 static void Cmd_HandleAnsi(Cmd_Line_t * line, char ch)

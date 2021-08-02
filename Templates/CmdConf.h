@@ -26,6 +26,8 @@
 // Allow tab completion of commands
 #define CMD_USE_TABCOMPLETE
 
+// This token will produce info on the specified menu or or function
+#define CMD_HELP_TOKEN		"?"
 
 
 /*
