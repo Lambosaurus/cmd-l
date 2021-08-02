@@ -133,6 +133,9 @@ typedef struct
 #ifdef CMD_USE_ECHO
 		bool echo;
 #endif
+#ifdef CMD_PROMPT
+		bool prompt;
+#endif
 } Cmd_LineConfig_t;
 
 typedef struct Cmd_Line_s {
