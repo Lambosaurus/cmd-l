@@ -13,6 +13,8 @@
 
 #define DEL				0x7F
 
+#define LF				CMD_LINE_END
+
 /*
  * PRIVATE TYPES
  */
@@ -142,7 +144,7 @@ void Cmd_Parse(Cmd_Line_t * line, const uint8_t * data, uint32_t count)
 					echo_count = count;
 					echo_data = data;
 					// Now print a full eol.
-					line->print((uint8_t *)"\r\n", 2);
+					line->print((uint8_t *)LF, 2);
 				}
 #endif //CMD_USE_ECHO
 				if (line->bfr.index)
@@ -302,7 +304,7 @@ void * Cmd_Malloc(Cmd_Line_t * line, uint32_t size)
 {
 	if (Cmd_MemRemaining(line) < size)
 	{
-		Cmd_Prints(line, Cmd_Reply_Error, "MEMORY OVERRUN\r\n");
+		Cmd_Prints(line, Cmd_Reply_Error, "MEMORY OVERRUN" LF);
 	}
 	// Ignore overrun and do it anyway.....
 	void * ptr = line->mem.head;
@@ -540,10 +542,10 @@ static void Cmd_RunMenu(Cmd_Line_t * line, const Cmd_Node_t * node, const char *
 	switch(Cmd_NextToken(line, &str, &token))
 	{
 	case Cmd_Token_Empty:
-		Cmd_Printf(line, Cmd_Reply_Info, "<menu: %s>\r\n", node->name);
+		Cmd_Printf(line, Cmd_Reply_Info, "<menu: %s>" LF, node->name);
 		return;
 	case Cmd_Token_Broken:
-		Cmd_Prints(line, Cmd_Reply_Error, "Incomplete token found\r\n");
+		Cmd_Prints(line, Cmd_Reply_Error, "Incomplete token found" LF);
 		return;
 	case Cmd_Token_Ok:
 		break; // Continue execution.
@@ -567,7 +569,7 @@ static void Cmd_RunMenu(Cmd_Line_t * line, const Cmd_Node_t * node, const char *
 		}
 		if (selected == NULL)
 		{
-			Cmd_Printf(line, Cmd_Reply_Error, "'%s' is not an item within <menu: %s>\r\n", token.str, node->name);
+			Cmd_Printf(line, Cmd_Reply_Error, "'%s' is not an item within <menu: %s>" LF, token.str, node->name);
 		}
 		else
 		{
@@ -617,12 +619,12 @@ static void Cmd_RunFunction(Cmd_Line_t * line, const Cmd_Node_t * node, const ch
 		}
 		else
 		{
-			Cmd_Prints(line, Cmd_Reply_Error, "Incomplete token found\r\n");
+			Cmd_Prints(line, Cmd_Reply_Error, "Incomplete token found" LF);
 			return;
 		}
 
 		// Parse failed or blank token found.
-		Cmd_Printf(line, Cmd_Reply_Error, "Argument %d is <%s: %s>\r\n", argn+1, Cmd_ArgTypeStr(line, arg), arg->name);
+		Cmd_Printf(line, Cmd_Reply_Error, "Argument %d is <%s: %s>" LF, argn+1, Cmd_ArgTypeStr(line, arg), arg->name);
 		return;
 	}
 	for (; argn < node->func.arglen; argn++)
@@ -633,7 +635,7 @@ static void Cmd_RunFunction(Cmd_Line_t * line, const Cmd_Node_t * node, const ch
 
 	if (tstat != Cmd_Token_Empty)
 	{
-		Cmd_Printf(line, Cmd_Reply_Error, "<func: %s> takes maximum %d arguments\r\n", node->name, node->func.arglen);
+		Cmd_Printf(line, Cmd_Reply_Error, "<func: %s> takes maximum %d arguments" LF, node->name, node->func.arglen);
 	}
 	else
 	{
@@ -643,21 +645,21 @@ static void Cmd_RunFunction(Cmd_Line_t * line, const Cmd_Node_t * node, const ch
 
 static void Cmd_PrintMenuHelp(Cmd_Line_t * line, const Cmd_Node_t * node)
 {
-	Cmd_Printf(line, Cmd_Reply_Info, "<menu: %s> contains %d nodes:\r\n", node->name, node->menu.count);
+	Cmd_Printf(line, Cmd_Reply_Info, "<menu: %s> contains %d nodes:" LF, node->name, node->menu.count);
 	for (uint32_t i = 0; i < node->menu.count; i++)
 	{
 		const Cmd_Node_t * child = node->menu.nodes[i];
-		Cmd_Printf(line, Cmd_Reply_Info, " - %s\r\n", child->name);
+		Cmd_Printf(line, Cmd_Reply_Info, " - %s" LF, child->name);
 	}
 }
 
 static void Cmd_PrintFunctionHelp(Cmd_Line_t * line, const Cmd_Node_t * node)
 {
-	Cmd_Printf(line, Cmd_Reply_Info, "<func: %s> takes %d arguments:\r\n", node->name, node->func.arglen);
+	Cmd_Printf(line, Cmd_Reply_Info, "<func: %s> takes %d arguments:" LF, node->name, node->func.arglen);
 	for (uint32_t argn = 0; argn < node->func.arglen; argn++)
 	{
 		const Cmd_Arg_t * arg = &node->func.args[argn];
-		Cmd_Printf(line, Cmd_Reply_Info, " - <%s: %s>\r\n", Cmd_ArgTypeStr(line, arg), arg->name);
+		Cmd_Printf(line, Cmd_Reply_Info, " - <%s: %s>" LF, Cmd_ArgTypeStr(line, arg), arg->name);
 	}
 }
 

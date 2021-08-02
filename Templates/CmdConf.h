@@ -43,6 +43,8 @@
 // Emit color output sequences, for warnings and errors.
 #define CMD_USE_COLOR
 
+// The line ending sequence on internally generated replies.
+#define CMD_LINE_END	"\r\n"
 
 
 /*
