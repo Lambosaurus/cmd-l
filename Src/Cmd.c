@@ -86,10 +86,8 @@ static void Cmd_RecallLine(Cmd_Line_t * line);
 
 void Cmd_Init(Cmd_Line_t * line, const Cmd_Node_t * root, void (*print)(const uint8_t * data, uint32_t size), void * heap, uint32_t heapSize)
 {
-	line->bfr.index = 0;
 	line->bfr.data = heap;
 	line->bfr.size = CMD_MAX_LINE;
-	line->bfr.recall_index = 0;
 	line->root = root;
 	line->print = print;
 
@@ -98,10 +96,9 @@ void Cmd_Init(Cmd_Line_t * line, const Cmd_Node_t * root, void (*print)(const ui
 	line->mem.head = line->mem.heap;
 
 	memset(&line->cfg, 0, sizeof(line->cfg));
-	line->last_ch = 0;
-#ifdef CMD_USE_ANSI
-	line->ansi = Cmd_Ansi_None;
-#endif
+
+	// Note, do not set properties that will be set by Cmd_Start.
+	Cmd_Start(line);
 }
 
 void Cmd_Start(Cmd_Line_t * line)
