@@ -62,7 +62,9 @@ static void Cmd_PrintFunctionHelp(Cmd_Line_t * line, const Cmd_Node_t * node);
 #endif
 
 #ifdef CMD_USE_BELL
-static void Cmd_Bell(Cmd_Line_t * line);
+static void Cmd_OnError(Cmd_Line_t * line);
+#else
+#define Cmd_OnError(x)		((void)0)
 #endif
 
 #ifdef CMD_USE_TABCOMPLETE
@@ -191,12 +193,10 @@ void Cmd_Parse(Cmd_Line_t * line, const uint8_t * data, uint32_t count)
 						line->print((uint8_t *)append, append_count);
 					}
 				}
-#ifdef CMD_USE_BELL
 				else
 				{
-					Cmd_Bell(line);
+					Cmd_OnError(line);
 				}
-#endif //CMD_USE_BELL
 #ifdef CMD_USE_ECHO
 				if (line->cfg.echo)
 				{
@@ -213,12 +213,10 @@ void Cmd_Parse(Cmd_Line_t * line, const uint8_t * data, uint32_t count)
 				{
 					line->bfr.index--;
 				}
-#ifdef CMD_USE_BELL
 				else
 				{
-					Cmd_Bell(line);
+					Cmd_OnError(line);
 				}
-#endif //CMD_USE_BELL
 				break;
 #ifdef CMD_USE_ANSI
 			case '\e':
@@ -291,12 +289,10 @@ void Cmd_Print(Cmd_Line_t * line, Cmd_ReplyLevel_t level, const char * data, uin
 		}
 	}
 #endif //CMD_USE_COLOR
-#ifdef CMD_USE_BELL
 	if (level == Cmd_Reply_Error)
 	{
-		Cmd_Bell(line);
+		Cmd_OnError(line);
 	}
-#endif //CMD_USE_BELL
 }
 
 void Cmd_Prints(Cmd_Line_t * line, Cmd_ReplyLevel_t level, const char * str)
@@ -711,31 +707,25 @@ static void Cmd_HandleAnsi(Cmd_Line_t * line, char ch)
 				{
 					Cmd_RecallLine(line);
 				}
-#ifdef CMD_USE_BELL
 				else
 				{
-					Cmd_Bell(line);
+					Cmd_OnError(line);
 				}
-#endif // CMD_USE_BELL
 				break;
 			case 'B': // down
 				if (line->bfr.index)
 				{
 					Cmd_ClearLine(line);
 				}
-#ifdef CMD_USE_BELL
 				else
 				{
-					Cmd_Bell(line);
+					Cmd_OnError(line);
 				}
-#endif //CMD_USE_BELL
 				break;
 			case 'C': // fwd
 			case 'D': // back
 			default:
-#ifdef CMD_USE_BELL
-				Cmd_Bell(line);
-#endif // CMD_USE_BELL
+				Cmd_OnError(line);
 				break;
 			}
 			line->ansi = Cmd_Ansi_None;
@@ -759,7 +749,6 @@ static void Cmd_ClearLine(Cmd_Line_t * line)
 #endif //CMD_USE_ECHO
 	line->bfr.recall_index = line->bfr.index;
 	line->bfr.index = 0;
-
 }
 
 static void Cmd_RecallLine(Cmd_Line_t * line)
@@ -775,7 +764,7 @@ static void Cmd_RecallLine(Cmd_Line_t * line)
 #endif //CMD_USE_ANSI
 
 #ifdef CMD_USE_BELL
-static void Cmd_Bell(Cmd_Line_t * line)
+static void Cmd_OnError(Cmd_Line_t * line)
 {
 	if (line->cfg.bell)
 	{
