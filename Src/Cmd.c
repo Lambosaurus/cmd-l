@@ -104,6 +104,22 @@ void Cmd_Init(Cmd_Line_t * line, const Cmd_Node_t * root, void (*print)(const ui
 #endif
 }
 
+void Cmd_Start(Cmd_Line_t * line)
+{
+	line->bfr.index = 0;
+	line->bfr.recall_index = 0;
+	line->last_ch = 0;
+#ifdef CMD_USE_ANSI
+	line->ansi = Cmd_Ansi_None;
+#endif
+#ifdef CMD_PROMPT
+	if (line->cfg.prompt)
+	{
+		line->print((uint8_t *)CMD_PROMPT, strlen(CMD_PROMPT));
+	}
+#endif //CMD_PROMPT
+}
+
 void Cmd_Parse(Cmd_Line_t * line, const uint8_t * data, uint32_t count)
 {
 #ifdef CMD_USE_ECHO

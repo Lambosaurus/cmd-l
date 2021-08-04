@@ -167,13 +167,18 @@ typedef struct Cmd_Line_s {
 // The heap is used for holding arguments and lines. It should be approximately 4x the maximum line size.
 void Cmd_Init(Cmd_Line_t * line, const Cmd_Node_t * root, void (*print)(const uint8_t * data, uint32_t size), void * heap, uint32_t heapSize);
 
+// This starts a new 'session' discarding any previous state
+// The prompt will be re-printed if enabled. This is required to print the prompt first time, as Cmd_Init will not.
+// Calling this before Cmd_Parse is NOT required
+void Cmd_Start(Cmd_Line_t * line);
+
 // Parses incoming data. This can parse partial or multiple lines.
 void Cmd_Parse(Cmd_Line_t * line, const uint8_t * data, uint32_t count);
 
 // Commands can use these for putting formatted responses back on the command line.
 void Cmd_Print(Cmd_Line_t * line, Cmd_ReplyLevel_t level, const char * data, uint32_t count);
-void Cmd_Printf(Cmd_Line_t * line, Cmd_ReplyLevel_t level, const char * fmt, ...);
 void Cmd_Prints(Cmd_Line_t * line, Cmd_ReplyLevel_t level, const char * str);
+void Cmd_Printf(Cmd_Line_t * line, Cmd_ReplyLevel_t level, const char * fmt, ...);
 
 // Used internally for accessing the command heap. This may be used for commands.
 // Note: this is not a smart heap. Items should be freed in order.
