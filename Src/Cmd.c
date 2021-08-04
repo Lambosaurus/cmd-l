@@ -124,7 +124,6 @@ void Cmd_Parse(Cmd_Line_t * line, const uint8_t * data, uint32_t count)
 {
 #ifdef CMD_USE_ECHO
 	const uint8_t * echo_data = data;
-	uint32_t echo_count = count;
 #endif //CMD_USE_ECHO
 
 	while(count--)
@@ -137,7 +136,6 @@ void Cmd_Parse(Cmd_Line_t * line, const uint8_t * data, uint32_t count)
 			Cmd_HandleAnsi(line, ch);
 #ifdef CMD_USE_ECHO
 			// Do not echo ansi sequences
-			echo_count = count;
 			echo_data = data;
 #endif //CMD_USE_ECHO
 		}
@@ -159,8 +157,7 @@ void Cmd_Parse(Cmd_Line_t * line, const uint8_t * data, uint32_t count)
 				if (line->cfg.echo)
 				{
 					// Print everything up until now excluding the current char
-					line->print(echo_data, echo_count - count - 1);
-					echo_count = count;
+					line->print(echo_data, (data - echo_data) - 1);
 					echo_data = data;
 					// Now print a full eol.
 					line->print((uint8_t *)LF, 2);
@@ -208,8 +205,7 @@ void Cmd_Parse(Cmd_Line_t * line, const uint8_t * data, uint32_t count)
 				{
 					// Print everything up until now excluding the current char
 					// This is needed to swallow the \t char.
-					line->print(echo_data, echo_count - count - 1);
-					echo_count = count;
+					line->print(echo_data, (data - echo_data) - 1);
 					echo_data = data;
 				}
 #endif //CMD_USE_ECHO
@@ -233,8 +229,7 @@ void Cmd_Parse(Cmd_Line_t * line, const uint8_t * data, uint32_t count)
 				if (line->cfg.echo)
 				{
 					// Swallow this char.
-					line->print(echo_data, echo_count - count - 1);
-					echo_count = count;
+					line->print(echo_data, (data - echo_data) - 1);
 					echo_data = data;
 				}
 #endif //CMD_USE_ECHO
@@ -259,9 +254,9 @@ void Cmd_Parse(Cmd_Line_t * line, const uint8_t * data, uint32_t count)
 		}
 	}
 #ifdef CMD_USE_ECHO
-	if (line->cfg.echo && echo_count)
+	if (line->cfg.echo && echo_data < data)
 	{
-		line->print(echo_data, echo_count);
+		line->print(echo_data, data - echo_data);
 	}
 #endif //CMD_USE_ECHO
 }
