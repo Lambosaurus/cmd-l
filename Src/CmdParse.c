@@ -274,16 +274,24 @@ static char Cmd_Lowchar(char ch)
 static bool Cmd_ParseHexPrefix(const char ** str)
 {
 	const char * start = *str;
-	if (*start == '0')
+	if (*start++ == '0')
 	{
-		// We want to allow 0x or 0h prefix.
-		start += 1;
+		if (Cmd_Lowchar(*start++) == 'x')
+		{
+			// 0x00 notation
+			*str = start;
+			return true;
+		}
 	}
-	char pfx = Cmd_Lowchar(*start);
-	if (pfx == 'x' || pfx == 'h')
+	else
 	{
-		*str = start+1;
-		return true;
+		// 00h notation
+		while (*start != 0) { start++; }
+		if (Cmd_Lowchar(*(start-1)) == 'h')
+		{
+			// str already points to start.
+			return true;
+		}
 	}
 	return false;
 }
@@ -306,6 +314,10 @@ static bool Cmd_ParseHex(const char ** str, uint32_t * value)
 	{
 		// Ensure we read at least 1 char
 		*value = v;
+		if (Cmd_Lowchar(*head) == 'h')
+		{
+			head++;
+		}
 		*str = head;
 		return true;
 	}
