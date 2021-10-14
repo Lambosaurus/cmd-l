@@ -9,7 +9,7 @@
  * PUBLIC DEFINITIONS
  */
 
-#define LENGTH(x)		(sizeof(x) / sizeof(*x))
+#define LENGTH(x)		(sizeof(x) / sizeof(*(x)))
 
 // Macros for creating menus.
 #define CMD_ARGUMENT(_type, _name) 		\
